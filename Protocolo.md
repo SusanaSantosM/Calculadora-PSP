@@ -11,3 +11,8 @@ Aquí el cliente realiza una consulta enviando una operación a solucionar.
 - **¿Qué contiene?** Una consulta, es decir la operación. Esta es de tipo double, por ejemplo: 2025-1967.
 
 
+**Mensaje 2:** El servidor envía el resultado de la operación al cliente. Este será de tipo double. 
+
+- **¿Quién lo envía?** El servidor
+- **¿Cuándo se envía?** Justo después del mensaje de consulta del cliente. Esta será la respuesta de la operación.
+- **¿Qué contiene?** Un número tipo double como resultado de la operación. Ejemplo: 58.
