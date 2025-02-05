@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,6 +38,25 @@ public class Cliente extends JFrame {
     public double num2 = 0;
     public double resultado = 0;
 
+    public Cliente(){
+        //Inicializamos los componentes
+        panelCentral = new JPanel();
+        add(panelCentral);
+
+    }
+
+    public void interfazCalculadora(){
+        //Diseñamos la ventana
+        setTitle("CALCULADORA");
+        setSize(300, 460);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+        setResizable(false); //Para que no se pueda redimensionar
+        getContentPane().setBackground(Color.BLACK); //Color de fondo
+        setVisible(true);
+
+    }
+
     private String enviarMensajeTCP(String peticion) throws IOException {
         //Creamos la conexión con el servidor
         Socket socket = new Socket(host, puerto);
@@ -57,13 +78,9 @@ public class Cliente extends JFrame {
         return respuesta;
     }
 
-    public static void main (String[] args){
+    public static void main (String[] args) throws IOException {
         Cliente cliente = new Cliente();
-        try {
-            cliente.enviarMensajeTCP("Hola, servidor, soy el Cliente");
-        } catch (Exception e) {
-            System.out.println("Error al enviar mensaje al servidor: " + e.getMessage());
-        }
+        cliente.interfazCalculadora();
     }
 
 }
