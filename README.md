@@ -1,4 +1,4 @@
-#CALCULADORA
+# CALCULADORA
 
 ## Funcionalidad
 Programa de una calculadora con el protocolo TCP, en el cuál se lleva a cabo las operaciones básicas que son: suma, resta, multiplicación, división.
