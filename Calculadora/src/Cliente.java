@@ -55,6 +55,33 @@ public class Cliente extends JFrame {
         getContentPane().setBackground(Color.BLACK); //Color de fondo
         setVisible(true);
 
+        //Creamos el campo de texto
+        textoEtq = new JLabel("0");
+        textoEtq.setBounds(10,10,265,50);
+        textoEtq.setHorizontalAlignment(SwingConstants.RIGHT); //Alineación a la derecha
+        textoEtq.setOpaque(true); //Para que se vea el color de fondo
+        textoEtq.setBackground(Color.BLACK); //Color de fondo
+        textoEtq.setForeground(Color.WHITE); //Color de la letra
+        textoEtq.setBorder(new LineBorder(Color.GRAY)); //Borde
+        textoEtq.setFont(new Font("Arial", Font.BOLD, 30)); //Fuente
+        add(textoEtq);
+
+        //Creamos los botones de la calculadora
+        botones = new JButton[numBotones];
+
+        for (int i = 0; i < numBotones; i++){
+            botones[i] = new JButton(textoBotones[i]);
+            //Para el botón de resultado tenemos que especificar su dimensión
+            int anchoBoton = (i==0) ? 257 : 62;
+            //Posicionamos los botones
+            botones[i].setBounds(xBotones[i], yBotones[i], anchoBoton, 62);
+            botones[i].setBackground(Color.DARK_GRAY); //Cambiamos el fondo
+            botones[i].setBorder(null); //Quitamos el borde
+            botones[i].setForeground(Color.WHITE); //Cambiamos el color de la letra
+            botones[i].setFont(new Font("Arial", Font.BOLD, 20)); //Cambiamos la fuente
+            botones[i].setFocusPainted(false); //Quitamos el borde al hacer click
+            add(botones[i]);  //Añadimos los botones al panel
+        }
     }
 
     private String enviarMensajeTCP(String peticion) throws IOException {
