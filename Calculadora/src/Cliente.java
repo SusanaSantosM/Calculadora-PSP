@@ -84,6 +84,10 @@ public class Cliente extends JFrame {
             botones[i].setFocusPainted(false); //Quitamos el borde al hacer click
             add(botones[i]);  //Añadimos los botones al panel
         }
+
+        //Añadimos los eventos a los botones
+        eventoBotonLimpiar();
+        eventoBotonPuntoDecimal();
     }
 
     public void eventoBotonPuntoDecimal(){
