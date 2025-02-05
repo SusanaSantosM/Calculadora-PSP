@@ -5,7 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Servidor {
+    // Componentes para la conexión con el cliente
     private static int puerto = 5000;
+    private static double resultado;
+
+    
 
     public static void main(String[] arg){
         try{
