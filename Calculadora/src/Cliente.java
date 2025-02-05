@@ -20,7 +20,7 @@ public class Cliente extends JFrame {
     private JButton[] botones;
     private int numBotones = 17;        // Número total de botones en el panel
     //Array de los botones para los números y operaciones
-    private String textoBotones[] = {"=","7","8","9","/","4","5","6","*","1","2","3","-","C","0",".","+"};
+    private String textoBotones[] = {"RESULTADO","7","8","9","/","4","5","6","*","1","2","3","-","C","0",".","+"};
     //Posicionamos en el eje x e y cada botón con un array
     private int xBotones[] = {15, 15, 80, 145, 210, 15, 80, 145, 210, 15, 80, 145, 210, 15, 80, 145, 210};
     private int yBotones[] = {90, 155, 155, 155, 155, 220, 220, 220, 220, 285, 285, 285, 285, 350, 350, 350, 350};
@@ -86,8 +86,33 @@ public class Cliente extends JFrame {
         }
 
         //Añadimos los eventos a los botones
+        eventoBotonesNumeros();
         eventoBotonLimpiar();
         eventoBotonPuntoDecimal();
+        eventoBotonesOperadores();
+        eventoBotonResultado();
+    }
+
+    public void eventoBotonesNumeros(){
+        for (int i=0; i<10; i++){
+            int numBoton = numerosBotones[i];
+            botones[numBoton].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    //Si el texto no es 0, sustituimos el texto por el valor del número
+                    if (nuevoNumero){
+                        if (!textoBotones[numBoton].equals("0")){
+                            textoEtq.setText(textoBotones[numBoton]);
+                            nuevoNumero = false; //Ya no es un nuevo número
+                        }
+                    } else {
+                        // Si es 0, lo añadimos al texto
+                        textoEtq.setText(textoEtq.getText() + textoBotones[numBoton]);
+                    }
+                }
+            });
+        }
     }
 
     public void eventoBotonPuntoDecimal(){
@@ -125,6 +150,11 @@ public class Cliente extends JFrame {
         });
     }
 
+    public void eventoBotonesOperadores(){}
+
+    public void eventoBotonResultado(){}
+
+
     private String enviarMensajeTCP(String peticion) throws IOException {
         //Creamos la conexión con el servidor
         Socket socket = new Socket(host, puerto);
@@ -146,7 +176,7 @@ public class Cliente extends JFrame {
         return respuesta;
     }
 
-    public static void main (String[] args) throws IOException {
+    public static void main (String[] args) throws Exception {
         Cliente cliente = new Cliente();
         cliente.interfazCalculadora();
     }
