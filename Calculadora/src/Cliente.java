@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -82,6 +84,41 @@ public class Cliente extends JFrame {
             botones[i].setFocusPainted(false); //Quitamos el borde al hacer click
             add(botones[i]);  //Añadimos los botones al panel
         }
+    }
+
+    public void eventoBotonPuntoDecimal(){
+        botones[15].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Si es un nuevo número, añadimos un 0 con .
+                if (nuevoNumero){
+                    textoEtq.setText("0.");
+                    nuevoNumero = false;
+                    puntoDecimal = true;
+                } else {
+                    // Si no hay punto decimal, lo añadimos
+                    //Esto permite que no se puedan añadir más de un punto decimal
+                    if (!puntoDecimal){
+                        textoEtq.setText(textoEtq.getText() + ".");
+                        puntoDecimal = true;
+                    }
+                }
+            }
+        });
+    }
+    public void eventoBotonLimpiar(){
+        botones[13].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textoEtq.setText("0");
+                nuevoNumero = true;
+                puntoDecimal = false;
+                operacion = "";
+                num1 = 0;
+                num2 = 0;
+                resultado = 0;
+            }
+        });
     }
 
     private String enviarMensajeTCP(String peticion) throws IOException {
