@@ -1,3 +1,5 @@
+#CALCULADORA
+
 ## Funcionalidad
 Programa de una calculadora con el protocolo TCP, en el cuál se lleva a cabo las operaciones básicas que son: suma, resta, multiplicación, división.
 Con una interfaz realizada en la clase Cliente, pero realizando las operaciones en la clase Servidor.
