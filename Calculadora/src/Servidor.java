@@ -62,8 +62,8 @@ public class Servidor {
                 // Realizamos la operación del cliente
                 String[] partes = peticion.split(" ");  // Separamos la cadena
                 double num1 = Double.parseDouble(partes[0]);  // Convertimos a double
-                double num2 = Double.parseDouble(partes[1]);
-                String operador = partes[2];                  // Operador
+                double num2 = Double.parseDouble(partes[2]);
+                String operador = partes[1];                  // Operador
 
                 //Enviamos la respuesta al cliente
                 resultado = resultadoOperacion(num1, num2, operador);
@@ -74,7 +74,7 @@ public class Servidor {
                 in.close();
                 out.close();
                 socket.close();
-                System.out.println("Cliente desconectado");
+                System.out.println("Servidor desconectado");
             }
         }catch(Exception e){
             System.out.println("Error al iniciar el servidor"+e.getMessage());
