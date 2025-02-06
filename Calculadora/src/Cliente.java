@@ -168,7 +168,7 @@ public class Cliente extends JFrame {
      * Método para añadir eventos a los botones de los operadores
      * +, -, *, /
      */
-    public void eventoBotonesOperadores() {
+    public void eventoBotonesOperadores(){
         for (int i = 0; i < 4; i++) {
             int numBoton = operacionesBotones[i];
             botones[numBoton].addActionListener(new ActionListener() {
@@ -176,10 +176,10 @@ public class Cliente extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     String textoActual = textoEtq.getText();
 
-                    // Si el usuario presiona "-" al inicio o después de otro operador, es un número negativo
+                    // Si se presiona "-" al inicio o después de otro operador, es un número negativo
                     if (textoBotones[numBoton].equals("-")) {
-                        if (nuevoNumero) {
-                            textoEtq.setText("-");  // Permitir que se ingrese - como primer número
+                        if (nuevoNumero || textoActual.isEmpty() || textoActual.equals("0")) {
+                            textoEtq.setText("-");
                             nuevoNumero = false;
                             return;
                         } else if (operacion.isEmpty()) {
@@ -191,11 +191,12 @@ public class Cliente extends JFrame {
                         }
                     }
 
-                    // Si ya hay operación pendiente, calcular el resultado parcial
+                    // Si ya hay operación pendiente, calcula resultado parcial
                     if (!operacion.isEmpty()) {
                         try {
                             num2 = Double.parseDouble(textoActual);
-                            resultado = Double.parseDouble(enviarMensajeTCP(num1 + " " + operacion + " " + num2));
+                            String mensaje = num1 + " " + operacion + " " + num2;
+                            resultado = Double.parseDouble(enviarMensajeTCP(mensaje));
                             textoEtq.setText(String.valueOf(resultado));
                             num1 = resultado;
                             nuevoNumero = true;
@@ -223,15 +224,17 @@ public class Cliente extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Si hay una operación pendiente
                 if (!operacion.equals("")) {
-
-                    // Validacion si divide con 0
-                    if (operacion.equals("/") && num2 == 0) {
-                        textoEtq.setText("Error");
-                        return;
-                    }
-
                     try {
                         num2 = Double.parseDouble(textoEtq.getText());
+                        resultado = Double.parseDouble(enviarMensajeTCP(num1+" "+operacion+" "+num2));
+                        textoEtq.setText(String.valueOf(resultado));
+
+                        // Validacion si divide con 0
+                        if (operacion.equals("/") && num2 == 0) {
+                            textoEtq.setText("Error");
+                            return;
+                        }
+
                         // Enviar la operación al servidor con espacios para que lea el split
                         String respuesta = enviarMensajeTCP(num1+ " " + operacion+ " " + num2);
                         textoEtq.setText(String.valueOf(respuesta));
