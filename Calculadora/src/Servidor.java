@@ -55,7 +55,7 @@ public class Servidor {
                 System.out.println("Petición del cliente: "+peticion);
 
                 // Realizamos la operación del cliente
-                String[] partes = peticion.split("(?<=[-+*/])|(?=[-+*/])");
+                String[] partes = peticion.split("\\s+");
                 // Si el formato no es correcto, se envía un mensaje de error
                 if (partes.length != 3) {
                     out.println("Error: Formato incorrecto. Usa num1 operador num2");
