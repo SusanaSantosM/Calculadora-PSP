@@ -9,6 +9,13 @@ public class Servidor {
     private static int puerto = 5000;
     private static double resultado;
 
+    /**
+     * Método que realiza la operación según el operador
+     * @param num1 primer operador de tipo double
+     * @param num2 segundo operador de tipo double
+     * @param operador
+     * @return resultado de la operación de tipo double
+     */
     public static double resultadoOperacion(double num1, double num2, String operador){
         // Según el operador, se cumple cada caso
         switch (operador){
@@ -21,6 +28,7 @@ public class Servidor {
             case "/":
                 if (num2 == 0){
                     try {
+                        // Lanzamos una excepción si el segundo operador es 0
                         throw new Exception("No se puede dividir entre 0");
                     } catch (Exception e) {
                         e.printStackTrace();
