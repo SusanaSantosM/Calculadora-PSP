@@ -28,7 +28,6 @@ public class Servidor {
             case "/":
                 if (num2 == 0){
                     try {
-                        // Lanzamos una excepción si el segundo operador es 0
                         throw new Exception("No se puede dividir entre 0");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -60,14 +59,21 @@ public class Servidor {
                 System.out.println("Petición del cliente: "+peticion);
 
                 // Realizamos la operación del cliente
-                String[] partes = peticion.split(" ");  // Separamos la cadena
-                double num1 = Double.parseDouble(partes[0]);  // Convertimos a double
-                double num2 = Double.parseDouble(partes[2]);
-                String operador = partes[1];                  // Operador
+                String[] partes = peticion.split("(?<=[-+*/])|(?=[-+*/])");
+                // Si el formato no es correcto, se envía un mensaje de error
+                if (partes.length != 3) {
+                    out.println("Error: Formato incorrecto. Usa num1 operador num2");
+                    continue; // Sigue esperando nuevas peticiones
+                }
+
+                double num1 = Double.parseDouble(partes[0].trim());
+                double num2 = Double.parseDouble(partes[2].trim());
+                String operador = partes[1].trim();
 
                 //Enviamos la respuesta al cliente
                 resultado = resultadoOperacion(num1, num2, operador);
                 out.println(resultado);
+                out.flush();    //Limpiamos el buffer
                 System.out.println("Resultado: "+resultado+" enviado al cliente");
 
                 //Cerramos la conexión y los buffers
