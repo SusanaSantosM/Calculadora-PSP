@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 
 public class Cliente extends JFrame {
@@ -32,8 +33,7 @@ public class Cliente extends JFrame {
     //Indicador de uso del punto decimal
     private boolean puntoDecimal = false;
     // String para almacenar la operación
-    // Esto también se enviará al servidor para el resultado
-    public String operacion = "";
+    public String operacion = "";       // Esto también se enviará al servidor para el resultado
     // Almacenar los números de las operaciones
     public double num1 = 0;
     public double num2 = 0;
@@ -43,7 +43,7 @@ public class Cliente extends JFrame {
         //Inicializamos los componentes
         panelCentral = new JPanel();
         add(panelCentral);
-
+        interfazCalculadora();
     }
 
     /**
@@ -90,9 +90,9 @@ public class Cliente extends JFrame {
 
         //Añadimos los eventos a los botones
         eventoBotonesNumeros();
+        eventoBotonesOperadores();
         eventoBotonLimpiar();
         eventoBotonPuntoDecimal();
-        eventoBotonesOperadores();
         eventoBotonResultado();
     }
 
@@ -168,38 +168,46 @@ public class Cliente extends JFrame {
      * Método para añadir eventos a los botones de los operadores
      * +, -, *, /
      */
-    public void eventoBotonesOperadores(){
-        // Recorremos el array de operaciones para añadir el evento a cada botón
+    public void eventoBotonesOperadores() {
         for (int i = 0; i < 4; i++) {
             int numBoton = operacionesBotones[i];
             botones[numBoton].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Si no hay operaciones pendientes
-                    if (operacion.equals("")) {
-                        // Asignamos el valor de la etiqueta al primer operador
-                        num1 = Double.parseDouble(textoEtq.getText());
-                        nuevoNumero = true;
-                        puntoDecimal = false;
-                        // Asignamos la operación
-                        operacion = textoBotones[numBoton];
-                    } else {
-                        // Si hay operaciones pendientes, calculamos el resultado parcial
+                    String textoActual = textoEtq.getText();
+
+                    // Si el usuario presiona "-" al inicio o después de otro operador, es un número negativo
+                    if (textoBotones[numBoton].equals("-")) {
+                        if (nuevoNumero) {
+                            textoEtq.setText("-");  // Permitir que se ingrese - como primer número
+                            nuevoNumero = false;
+                            return;
+                        } else if (operacion.isEmpty()) {
+                            // Si no hay operación pendiente, asigna normalmente
+                            num1 = Double.parseDouble(textoActual);
+                            operacion = "-";
+                            nuevoNumero = true;
+                            return;
+                        }
+                    }
+
+                    // Si ya hay operación pendiente, calcular el resultado parcial
+                    if (!operacion.isEmpty()) {
                         try {
-                            num2 = Double.parseDouble(textoEtq.getText());
-                            // Enviamos la operación al servidor
-                            resultado = Double.parseDouble(enviarMensajeTCP(num1 + operacion + num2));
-                            // Mostramos el resultado en la etiqueta
+                            num2 = Double.parseDouble(textoActual);
+                            resultado = Double.parseDouble(enviarMensajeTCP(num1 + " " + operacion + " " + num2));
                             textoEtq.setText(String.valueOf(resultado));
-                            // Actualizamos num1 con el resultado para operaciones consecutivas
                             num1 = resultado;
                             nuevoNumero = true;
-                            puntoDecimal = false;
-                            // Asignamos la nueva operación
                             operacion = textoBotones[numBoton];
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
+                    } else {
+                        // Guardamos el primer número y el operador
+                        num1 = Double.parseDouble(textoActual);
+                        operacion = textoBotones[numBoton];
+                        nuevoNumero = true;
                     }
                 }
             });
@@ -215,11 +223,16 @@ public class Cliente extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Si hay una operación pendiente
                 if (!operacion.equals("")) {
-                    num2 = Double.parseDouble(textoEtq.getText());
 
                     try {
+                        num2 = Double.parseDouble(textoEtq.getText());
                         // Enviar la operación al servidor con espacios para que lea el split
                         String respuesta = enviarMensajeTCP(num1+ " " + operacion+ " " + num2);
+                        textoEtq.setText(String.valueOf(respuesta));
+                        // Actualizamos las variables
+                        nuevoNumero = true;
+                        puntoDecimal = false;
+                        operacion = "";
 
                         // Verificar si la respuesta es válida
                         if (respuesta != null && !respuesta.trim().isEmpty()) {
@@ -231,17 +244,16 @@ public class Cliente extends JFrame {
                                 System.err.println("ERROR: Respuesta del servidor no es un número válido: " + respuesta);
                             }
                         } else {
-                            textoEtq.setText("Error, servidor no responde");
+                            textoEtq.setText("Error, respuesta vacía");
                             System.err.println("ERROR: Respuesta del servidor es nula o vacía.");
                         }
                         // Se actualizan las variables
                         nuevoNumero = true;
                         puntoDecimal = false;
                         operacion = "";
-
-                    } catch (IOException ex) {
-                        textoEtq.setText("Error");
-                        ex.printStackTrace();
+                    } catch (Exception ex) {
+                        textoEtq.setText("Error de conexión");
+                        System.out.println("ERROR: No se pudo realizar la operación"+ ex.getMessage());
                     }
                 }
             }
@@ -266,13 +278,14 @@ public class Cliente extends JFrame {
 
         //Enviamos la petición al servidor
         out.println(peticion);
+        out.flush(); //Limpiamos el buffer
         System.out.println("Petición al servidor: " + peticion);
 
         //Recibimos la respuesta del servidor
         String respuesta = in.readLine();
 
         // Verificamos que la respuesta no sea nula o vacía
-        if(respuesta == null || respuesta.isEmpty()){
+        if(respuesta == null || respuesta.trim().isEmpty()){
             System.out.println("ERROR: No se recibió respuesta del servidor");
             respuesta = "0";
         }
