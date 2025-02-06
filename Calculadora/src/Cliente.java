@@ -224,6 +224,12 @@ public class Cliente extends JFrame {
                 // Si hay una operación pendiente
                 if (!operacion.equals("")) {
 
+                    // Validacion si divide con 0
+                    if (operacion.equals("/") && num2 == 0) {
+                        textoEtq.setText("Error");
+                        return;
+                    }
+
                     try {
                         num2 = Double.parseDouble(textoEtq.getText());
                         // Enviar la operación al servidor con espacios para que lea el split
@@ -295,7 +301,6 @@ public class Cliente extends JFrame {
         in.close();
         out.close();
         socket.close();
-        System.out.println("Cliente desconectado");
 
         return respuesta;
     }
