@@ -218,8 +218,8 @@ public class Cliente extends JFrame {
                     num2 = Double.parseDouble(textoEtq.getText());
 
                     try {
-                        // Enviar la operación al servidor
-                        String respuesta = enviarMensajeTCP(num1 + operacion + num2);
+                        // Enviar la operación al servidor con espacios para que lea el split
+                        String respuesta = enviarMensajeTCP(num1+ " " + operacion+ " " + num2);
 
                         // Verificar si la respuesta es válida
                         if (respuesta != null && !respuesta.trim().isEmpty()) {
@@ -227,11 +227,11 @@ public class Cliente extends JFrame {
                                 resultado = Double.parseDouble(respuesta);
                                 textoEtq.setText(String.valueOf(resultado));
                             } catch (NumberFormatException ex) {
-                                textoEtq.setText("Error");
+                                textoEtq.setText("Error, no es número válido");
                                 System.err.println("ERROR: Respuesta del servidor no es un número válido: " + respuesta);
                             }
                         } else {
-                            textoEtq.setText("Error");
+                            textoEtq.setText("Error, servidor no responde");
                             System.err.println("ERROR: Respuesta del servidor es nula o vacía.");
                         }
                         // Se actualizan las variables
@@ -258,6 +258,7 @@ public class Cliente extends JFrame {
     private String enviarMensajeTCP(String peticion) throws IOException {
         //Creamos la conexión con el servidor
         Socket socket = new Socket(host, puerto);
+        System.out.println("Conectando con el servidor.");
 
         //Buffers de entrada y salida para recibir mensajes
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -265,13 +266,23 @@ public class Cliente extends JFrame {
 
         //Enviamos la petición al servidor
         out.println(peticion);
+        System.out.println("Petición al servidor: " + peticion);
 
         //Recibimos la respuesta del servidor
         String respuesta = in.readLine();
+
+        // Verificamos que la respuesta no sea nula o vacía
+        if(respuesta == null || respuesta.isEmpty()){
+            System.out.println("ERROR: No se recibió respuesta del servidor");
+            respuesta = "0";
+        }
         System.out.println("Respuesta del servidor: " + respuesta);
 
-        //Cerramos la conexión
+        //Cerramos la conexión y los buffers
+        in.close();
+        out.close();
         socket.close();
+        System.out.println("Cliente desconectado");
 
         return respuesta;
     }
