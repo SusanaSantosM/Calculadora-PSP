@@ -55,14 +55,24 @@ public class Servidor {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-                //Leemos la petición del cliente
+                //Leemos la petición del cliente (mensajes)
                 String peticion = in.readLine();
                 System.out.println("Petición del cliente: "+peticion);
 
-                //Enviamos la respuesta al cliente
-                out.println("Hola, cliente");
+                // Realizamos la operación del cliente
+                String[] partes = peticion.split(" ");  // Separamos la cadena
+                double num1 = Double.parseDouble(partes[0]);  // Convertimos a double
+                double num2 = Double.parseDouble(partes[1]);
+                String operador = partes[2];                  // Operador
 
-                //Cerramos la conexión
+                //Enviamos la respuesta al cliente
+                resultado = resultadoOperacion(num1, num2, operador);
+                out.println(resultado);
+                System.out.println("Resultado: "+resultado+" enviado al cliente");
+
+                //Cerramos la conexión y los buffers
+                in.close();
+                out.close();
                 socket.close();
                 System.out.println("Cliente desconectado");
             }
