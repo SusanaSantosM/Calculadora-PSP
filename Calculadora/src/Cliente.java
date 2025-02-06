@@ -24,10 +24,9 @@ public class Cliente extends JFrame {
     //Posicionamos en el eje x e y cada botón con un array
     private int xBotones[] = {15, 15, 80, 145, 210, 15, 80, 145, 210, 15, 80, 145, 210, 15, 80, 145, 210};
     private int yBotones[] = {90, 155, 155, 155, 155, 220, 220, 220, 220, 285, 285, 285, 285, 350, 350, 350, 350};
-    //Array de los botones para los números
+    //Array de los botones para los números y operadores según su posición
     private int numerosBotones[] = {1,2,3,5,6,7,9,10,11,14};
-    //Array de los botones para las operaciones
-    private String operacionesBotones[] = {"/","*","-","+","="};
+    private int operacionesBotones[] = {4,8,12,16};
     //Indicador que se termino de escribir un número
     private boolean nuevoNumero = true;
     //Indicador de uso del punto decimal
@@ -47,6 +46,10 @@ public class Cliente extends JFrame {
 
     }
 
+    /**
+     * Método para crear la interfaz de la calculadora
+     * con los botones y etiqueta como campo de texto
+     */
     public void interfazCalculadora(){
         //Diseñamos la ventana
         setTitle("CALCULADORA");
@@ -93,6 +96,9 @@ public class Cliente extends JFrame {
         eventoBotonResultado();
     }
 
+    /**
+     * Método para añadir eventos a los botones de los números
+     */
     public void eventoBotonesNumeros(){
         for (int i=0; i<10; i++){
             int numBoton = numerosBotones[i];
@@ -115,6 +121,9 @@ public class Cliente extends JFrame {
         }
     }
 
+    /**
+     * Método para añadir eventos al botón de punto decimal
+     */
     public void eventoBotonPuntoDecimal(){
         botones[15].addActionListener(new ActionListener() {
             @Override
@@ -135,6 +144,11 @@ public class Cliente extends JFrame {
             }
         });
     }
+
+    /**
+     * Método para añadir eventos al botón de limpiar (C)
+     * Borra los números en la etiqueta y reinicia las variables
+     */
     public void eventoBotonLimpiar(){
         botones[13].addActionListener(new ActionListener() {
             @Override
@@ -150,11 +164,55 @@ public class Cliente extends JFrame {
         });
     }
 
-    public void eventoBotonesOperadores(){}
+    public void eventoBotonesOperadores(){
+        // Recorremos el array de operaciones para añadir el evento a cada botón
+        for (int i = 0; i < 4; i++) {
+            int numBoton = operacionesBotones[i];
+            botones[numBoton].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Si no hay operaciones pendientes
+                    if (operacion.equals("")) {
+                        // Asignamos el valor de la etiqueta al primer operador
+                        num1 = Double.parseDouble(textoEtq.getText());
+                        nuevoNumero = true;
+                        puntoDecimal = false;
+                        // Asignamos la operación
+                        operacion = textoBotones[numBoton];
+                    } else {
+                        // Si hay operaciones pendientes, calculamos el resultado parcial
+                        try {
+                            num2 = Double.parseDouble(textoEtq.getText());
+                            // Enviamos la operación al servidor
+                            resultado = Double.parseDouble(enviarMensajeTCP(num1 + operacion + num2));
+                            // Mostramos el resultado en la etiqueta
+                            textoEtq.setText(String.valueOf(resultado));
+                            // Actualizamos num1 con el resultado para operaciones consecutivas
+                            num1 = resultado;
+                            nuevoNumero = true;
+                            puntoDecimal = false;
+                            // Asignamos la nueva operación
+                            operacion = textoBotones[numBoton];
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+    }
 
-    public void eventoBotonResultado(){}
+    public void eventoBotonResultado(){
+
+    }
 
 
+    /**
+     * Método para enviar la petición al servidor
+     * @param peticion mensaje a enviar al servidor
+     * @return respuesta del servidor
+     * @throws IOException excepción de entrada/salida
+     */
     private String enviarMensajeTCP(String peticion) throws IOException {
         //Creamos la conexión con el servidor
         Socket socket = new Socket(host, puerto);
