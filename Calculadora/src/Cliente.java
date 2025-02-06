@@ -164,6 +164,10 @@ public class Cliente extends JFrame {
         });
     }
 
+    /**
+     * Método para añadir eventos a los botones de los operadores
+     * +, -, *, /
+     */
     public void eventoBotonesOperadores(){
         // Recorremos el array de operaciones para añadir el evento a cada botón
         for (int i = 0; i < 4; i++) {
@@ -202,8 +206,46 @@ public class Cliente extends JFrame {
         }
     }
 
+    /**
+     * Método para añadir eventos al botón de resultado
+     */
     public void eventoBotonResultado(){
+        botones[0].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Si hay una operación pendiente
+                if (!operacion.equals("")) {
+                    num2 = Double.parseDouble(textoEtq.getText());
 
+                    try {
+                        // Enviar la operación al servidor
+                        String respuesta = enviarMensajeTCP(num1 + operacion + num2);
+
+                        // Verificar si la respuesta es válida
+                        if (respuesta != null && !respuesta.trim().isEmpty()) {
+                            try {
+                                resultado = Double.parseDouble(respuesta);
+                                textoEtq.setText(String.valueOf(resultado));
+                            } catch (NumberFormatException ex) {
+                                textoEtq.setText("Error");
+                                System.err.println("ERROR: Respuesta del servidor no es un número válido: " + respuesta);
+                            }
+                        } else {
+                            textoEtq.setText("Error");
+                            System.err.println("ERROR: Respuesta del servidor es nula o vacía.");
+                        }
+                        // Se actualizan las variables
+                        nuevoNumero = true;
+                        puntoDecimal = false;
+                        operacion = "";
+
+                    } catch (IOException ex) {
+                        textoEtq.setText("Error");
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
 
