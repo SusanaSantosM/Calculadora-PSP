@@ -78,8 +78,13 @@ El servidor cierra la conexión con el cliente y vuelve a esperar más conexione
 Si la conexión con el servidor falla o no hay una respuesta válida, se captura la excepción y se muestra un mensaje de "ERROR" en la pantalla y en la consola.
 - División por cero:
 Si el usuario intenta dividir por cero, se muestra un mensaje de "ERROR" en la pantalla.
+
+![image](https://github.com/user-attachments/assets/76fe62ef-b051-421e-8442-8ce8dba1bf5f)
+
 - Puerto ocupado:
 Maneja una excepción en la cuál si el puerto al qeu se intenta conectar el servidor está ocupado, se muestra un mensaje "ERROR de conexión" por consola y pantalla.
+
+![image](https://github.com/user-attachments/assets/c8afd8e2-5f8c-4b84-bc1b-0f457e049d6f)
 
 ## Mejoras a futuro
 
