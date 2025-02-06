@@ -27,11 +27,7 @@ public class Servidor {
                 return num1 * num2;
             case "/":
                 if (num2 == 0){
-                    try {
-                        throw new Exception("No se puede dividir entre 0");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    throw new IllegalArgumentException("No se puede dividir entre 0");
                 }
                 return num1 / num2;
             default:
