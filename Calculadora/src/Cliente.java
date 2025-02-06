@@ -224,16 +224,17 @@ public class Cliente extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Si hay una operación pendiente
                 if (!operacion.equals("")) {
+
+                    // Validacion si divide con 0
+                    if (operacion.equals("/") && num2 == 0) {
+                        textoEtq.setText("Error");
+                        return;
+                    }
+
                     try {
                         num2 = Double.parseDouble(textoEtq.getText());
                         resultado = Double.parseDouble(enviarMensajeTCP(num1+" "+operacion+" "+num2));
                         textoEtq.setText(String.valueOf(resultado));
-
-                        // Validacion si divide con 0
-                        if (operacion.equals("/") && num2 == 0) {
-                            textoEtq.setText("Error");
-                            return;
-                        }
 
                         // Enviar la operación al servidor con espacios para que lea el split
                         String respuesta = enviarMensajeTCP(num1+ " " + operacion+ " " + num2);
